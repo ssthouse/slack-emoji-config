@@ -1,15 +1,27 @@
-let changeColor = document.getElementById('changeColor')
+var bkg = chrome.extension.getBackgroundPage()
 
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color
-  changeColor.setAttribute('value', data.color)
-})
-
-changeColor.onclick = function(element) {
-  let color = element.target.value
-  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    chrome.tabs.executeScript(tabs[0].id, {
-      code: 'document.body.style.backgroundColor = "' + color + '";'
-    })
+function setInitialInputVal() {
+  let emojiSizeInput = document.getElementById('emoji-size')
+  bkg.console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+  chrome.storage.sync.get(['emoji-size'], function(result) {
+    bkg.console.log(result['emoji-size'])
+    emojiSizeInput.value = result['emoji-size'] || 48
   })
 }
+
+function setInputListener() {
+  let submitBtn = document.getElementById('submit-button')
+  let emojiSizeInput = document.getElementById('emoji-size')
+  submitBtn.onclick = function() {
+    chrome.storage.sync.set({ 'emoji-size': emojiSizeInput.value }, result => {
+      bkg.console.log('success update slack emoji size')
+    })
+  }
+}
+
+function init() {
+  setInitialInputVal()
+  setInputListener()
+}
+
+init()

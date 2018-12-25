@@ -14,5 +14,7 @@ function resizeEmoji(size) {
   document.getElementsByTagName('head')[0].appendChild(styleElement)
 }
 
-
-resizeEmoji(128)
+chrome.storage.sync.get(['emoji-size'], function(result) {
+  var size = result['emoji-size'] || 48
+  resizeEmoji(size)
+})
